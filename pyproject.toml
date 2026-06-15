@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "emergent"
+version = "0.1.0"
+description = "Emergent intelligence from simple local rules, in PyTorch."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "emergent" }]
+keywords = [
+    "emergence", "cellular-automata", "lenia", "neural-cellular-automata",
+    "reaction-diffusion", "artificial-life", "pytorch", "self-organization",
+]
+dependencies = [
+    "torch>=2.2",
+    "numpy>=1.24",
+    "pillow>=10",
+    "imageio>=2.31",
+    "imageio-ffmpeg>=0.4",
+]
+
+[project.scripts]
+emergent = "emergent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["emergent*"]

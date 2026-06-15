@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Trained weights and bulky media (regeneratable from code)
+checkpoints/*.pt
+gallery/**/*.mp4
+
+# OS / editor
+.DS_Store
+*.log
