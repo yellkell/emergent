@@ -159,6 +159,7 @@ class NeuralCA(Rule):
         step_range: Tuple[int, int] = (48, 64),
         damage: bool = True,
         n_damage: int = 2,
+        n_seed: int = 1,
         lr_decay_at: float = 0.7,
         log_every: int = 50,
         on_log: Optional[Callable[[int, float], None]] = None,
@@ -184,12 +185,16 @@ class NeuralCA(Rule):
             idx = torch.randperm(pool_size, device=dev)[:batch]
             x = pool[idx].clone()
 
-            # Rank by current loss: re-seed the worst, damage the best.
+            # Rank by current loss: re-seed the worst (so growth-from-scratch is
+            # always in the batch and weighted enough to actually be learned),
+            # damage the best (so regeneration is learned).
             with torch.no_grad():
                 rank = ((x[:, :4] - tgt) ** 2).mean(dim=(1, 2, 3)).argsort(descending=True)
-            x[rank[0]] = self.seed(1)[0]
+            seeds = max(1, min(n_seed, batch - 1))
+            for s in range(seeds):
+                x[rank[s]] = self.seed(1)[0]
             if damage and it > iters // 20:
-                for j in range(1, 1 + min(n_damage, batch - 1)):
+                for j in range(1, 1 + min(n_damage, batch - seeds)):
                     x[rank[-j]] = self.damage(x[rank[-j]].unsqueeze(0))[0]
 
             steps = int(torch.randint(step_range[0], step_range[1] + 1, (1,)).item())

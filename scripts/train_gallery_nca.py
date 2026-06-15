@@ -34,7 +34,7 @@ def main() -> None:
         print(f"\n=== training neural-ca → {name} ({iters} iters) ===", flush=True)
         t0 = time.time()
         model, hist = train_nca(
-            name, size=40, iters=iters,
+            name, size=40, iters=iters, n_seed=2,
             on_log=lambda it, l, n=name: print(f"  [{n}] iter {it:5d}  loss {l:.5f}", flush=True),
         )
         model.save(f"checkpoints/{name}.pt")
