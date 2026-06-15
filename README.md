@@ -48,7 +48,7 @@ Gray–Scott, Particle Life) and the learned rule keeps its weights as **paramet
 | **Gray–Scott** | two chemical fields | reaction + diffusion (`f`, `k`) | Turing patterns: coral, fingerprints, spirals |
 | **Lenia** | a continuous field in `[0,1]` | one kernel + one growth curve | self-sustaining *life-forms* |
 | **Particle Life** | N particles, K species | a K×K attraction matrix | cells, membranes, whole ecologies |
-| **Neural CA** ⭐ | a 16-channel grid | a **learned** ~6k-param local rule | **morphogenesis & self-repair** |
+| **Neural CA** ⭐ | a 16-channel grid | a **learned** ~8k-param local rule | **morphogenesis & self-repair** |
 
 ### Gray–Scott — patterns from two reagents
 Two chemicals diffuse at different rates while `U + 2V → 3V` quietly burns:
@@ -91,7 +91,7 @@ none of it written down anywhere but the matrix.
 ### Neural CA — a rule that *learns* to build, and to heal
 This is the centerpiece. Each cell is a 16-vector (the first four channels are the visible RGBA, the
 rest are hidden state). At every tick a cell perceives its 3×3 neighbourhood through fixed Sobel
-filters, runs the result through a **tiny shared network** (two 1×1 convolutions, ~6k weights),
+filters, runs the result through a **tiny shared network** (two 1×1 convolutions, ~8k weights),
 **stochastically** adds the update to itself, and dies if it has no living neighbours.
 
 The network is *identical in every cell* and only ever sees its neighbours. Yet trained against a target
@@ -101,7 +101,7 @@ intelligence out.
 
 <div align="center">
 <img src="gallery/neural-ca_heart.gif" width="30%"/>
-<img src="gallery/neural-ca_ladybug.gif" width="30%"/>
+<img src="gallery/neural-ca_flower.gif" width="30%"/>
 <img src="gallery/neural-ca_star.gif" width="30%"/>
 
 *grow from one cell → fully formed → amputated → regrown*
@@ -125,8 +125,8 @@ emergent particle-life --preset ecology --steps 400 --out life.gif
 emergent lenia --set mu=0.15 --set sigma=0.016 --set betas=1,0.5,0.3
 
 # the centerpiece: learn a rule, then watch it grow and heal
-emergent neural-ca train --target ladybug --out checkpoints/ladybug.pt
-emergent neural-ca grow  --ckpt checkpoints/ladybug.pt --damage --out regen.gif
+emergent neural-ca train --target flower --out checkpoints/flower.pt
+emergent neural-ca grow  --ckpt checkpoints/flower.pt --damage --out regen.gif
 
 # render the whole curated gallery
 emergent gallery --out gallery

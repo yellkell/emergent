@@ -53,7 +53,7 @@ class NeuralCA(Rule):
     def __init__(
         self,
         channels: int = 16,
-        hidden: int = 96,
+        hidden: int = 128,
         size: int = 40,
         fire_rate: float = 0.5,
         alive_threshold: float = 0.1,
