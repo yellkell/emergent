@@ -75,7 +75,9 @@ def main() -> None:
         _render_growth(model, os.path.join(OUT, f"neural-ca_{target}.gif"),
                        steps=130, scale=5, damage=True, fps=18)
         if nca_frame is None:
+            import torch
             from emergent.core import Universe
+            torch.manual_seed(0)
             u = Universe(model)
             u.step(96)  # a fully grown organism for the montage
             nca_frame = model.render(u.state)

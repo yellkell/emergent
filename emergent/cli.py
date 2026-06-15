@@ -95,15 +95,24 @@ def cmd_nca_grow(args: argparse.Namespace) -> None:
     model = NeuralCA.load(args.ckpt, device=dev)
     print(f"[emergent] growing {args.ckpt} (target={model.target_name}) · {describe_device(dev)}")
     out = args.out or os.path.join("gallery", f"neural-ca_{model.target_name}.gif")
-    _render_growth(model, out, steps=args.steps, scale=args.scale, damage=args.damage, fps=args.fps)
+    _render_growth(model, out, steps=args.steps, scale=args.scale, damage=args.damage,
+                   fps=args.fps, seed=args.seed)
 
 
 def _render_growth(model: NeuralCA, out: str, *, steps: int, scale: int,
-                   damage: bool, fps: int) -> None:
-    """Grow from a single seed; optionally amputate twice and watch it heal."""
+                   damage: bool, fps: int, seed: int = 0) -> None:
+    """Grow from a single seed; optionally amputate twice and watch it heal.
+
+    The stochastic fire rate makes the very first ticks RNG-sensitive (a
+    concave shape can occasionally fail to bootstrap), so growth is seeded for
+    deterministic, reproducible clips.
+    """
+    import torch
+
     from .core import Universe
     from .render.painter import upscale
 
+    torch.manual_seed(seed)
     uni = Universe(model)
     frames: List = []
     cuts = {steps // 2, int(steps * 0.78)} if damage else set()
@@ -227,6 +236,7 @@ def build_parser() -> argparse.ArgumentParser:
     gr.add_argument("--scale", type=int, default=6)
     gr.add_argument("--damage", action="store_true")
     gr.add_argument("--fps", type=int, default=20)
+    gr.add_argument("--seed", type=int, default=0)
     gr.add_argument("--device", default="auto")
     gr.add_argument("--out", default=None)
     gr.set_defaults(func=cmd_nca_grow)
