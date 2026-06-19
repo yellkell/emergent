@@ -1,29 +1,26 @@
 /**
  * Papercraft Desert — an IWSDK / WebXR scene.
  *
- * A 360° low-poly desert you can stand inside: layered banded mesas, saguaro /
- * prickly-pear / agave / barrel cacti, sagebrush, wildflowers and grass, an
- * oasis, a gradient sky with drifting clouds, a sunburst sun, plus tumbleweeds
- * and birds that move. Locomotion lets you walk/teleport the sands; a few props
- * (rocks, barrel cacti) are grab-and-throwable.
+ * A calm, encompassing 360° desert you stand inside: open sand underfoot,
+ * rolling dunes and banded mesas ringing the horizon all around you, sparse
+ * saguaro silhouettes, a gradient sky with drifting clouds, wheeling birds,
+ * tumbleweeds, and the occasional wandering dust devil. Locomotion lets you
+ * walk / teleport across the sands.
  */
 import {
   AmbientLight,
   Color,
   DirectionalLight,
-  DistanceGrabbable,
   EnvironmentType,
   Fog,
   HemisphereLight,
-  Interactable,
   LocomotionEnvironment,
-  MovementMode,
   SessionMode,
   World,
 } from '@iwsdk/core';
 
 import { buildDesertScene, makeSkyDome } from './desert.js';
-import { Bird, Cloud, DesertSystem, SunGlow, Sway, Tumbleweed } from './systems.js';
+import { Bird, Cloud, DesertSystem, DustDevil, SunGlow, Sway, Tumbleweed } from './systems.js';
 
 World.create(document.getElementById('scene-container') as HTMLDivElement, {
   assets: {},
@@ -32,17 +29,17 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
     offer: 'always',
     features: { handTracking: true },
   },
-  features: { grabbing: true, locomotion: true },
+  features: { locomotion: true },
 }).then((world) => {
   const { scene, camera } = world;
 
   // --- sky & light: a warm, slightly hazy desert afternoon ---
   scene.background = new Color(0xf4d2a4);
-  scene.fog = new Fog(0xf4d2a4, 20, 72);
+  scene.fog = new Fog(0xf4d2a4, 22, 88);
   scene.add(makeSkyDome());
   scene.add(new HemisphereLight(0xfff3da, 0xc98a4a, 1.05));
   const sunLight = new DirectionalLight(0xffd9a0, 1.65);
-  sunLight.position.set(-10, 11, -10);
+  sunLight.position.set(-12, 11, -8);
   scene.add(sunLight);
   scene.add(new AmbientLight(0xffe9c9, 0.22));
 
@@ -54,7 +51,7 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
     .createTransformEntity(d.ground)
     .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
 
-  // Static scenery (mesas, dunes, fixed flora, rocks, oasis).
+  // Static scenery (dunes, mesas, fixed cacti).
   world.createTransformEntity(d.statics);
 
   // Animated members of the ecosystem.
@@ -63,19 +60,12 @@ World.create(document.getElementById('scene-container') as HTMLDivElement, {
   d.tumbleweeds.forEach((o) => world.createTransformEntity(o).addComponent(Tumbleweed));
   d.birds.forEach((o) => world.createTransformEntity(o).addComponent(Bird));
   d.clouds.forEach((o) => world.createTransformEntity(o).addComponent(Cloud));
-
-  // Grab-and-throw souvenirs.
-  d.grabbables.forEach((o) =>
-    world
-      .createTransformEntity(o)
-      .addComponent(Interactable)
-      .addComponent(DistanceGrabbable, { movementMode: MovementMode.MoveFromTarget }),
-  );
+  d.dustDevils.forEach((o) => world.createTransformEntity(o).addComponent(DustDevil));
 
   // Initial framing for the emulator / flat-screen preview (the headset pose
   // takes over inside VR).
-  camera.position.set(0, 1.7, 7);
-  camera.lookAt(0, 1.4, -10);
+  camera.position.set(0, 1.7, 6);
+  camera.lookAt(0, 1.5, -12);
 
   world.registerSystem(DesertSystem);
 });
