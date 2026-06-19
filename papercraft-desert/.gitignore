@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local SSL certificates (auto-generated)
+.cert/
+
+# IWSDK / dev tooling (auto-generated)
+.iwsdk/
+.mcp.json
+.cursor/mcp.json
+.vscode/mcp.json
+.codex/config.toml
+public/ui/
