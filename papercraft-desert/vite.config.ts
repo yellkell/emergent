@@ -7,8 +7,11 @@ export default defineConfig({
     // HTTPS is required for WebXR; mkcert provisions a local trusted cert.
     mkcert(),
     // Dev server + in-browser WebXR emulator (no headset needed to iterate).
+    // injectOnBuild bundles the emulator into the production build too, so the
+    // hosted (GitHub Pages) demo is explorable on desktop with mouse/keyboard,
+    // while a real headset still gets true WebXR.
     iwsdkDev({
-      emulator: { device: 'metaQuest3' },
+      emulator: { device: 'metaQuest3', injectOnBuild: true },
       verbose: true,
     }),
   ],
