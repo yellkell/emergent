@@ -11,12 +11,14 @@ export const SunGlow = createComponent('SunGlow', {});
 export const Tumbleweed = createComponent('Tumbleweed', {});
 export const Bird = createComponent('Bird', {});
 export const Sway = createComponent('Sway', {});
+export const Cloud = createComponent('Cloud', {});
 
 export class DesertSystem extends createSystem({
   suns: { required: [SunGlow] },
   tumbleweeds: { required: [Tumbleweed] },
   birds: { required: [Bird] },
   sways: { required: [Sway] },
+  clouds: { required: [Cloud] },
 }) {
   update(delta: number, time: number) {
     const dt = Math.min(delta, 0.05); // guard against hitches / paused tabs
@@ -28,15 +30,15 @@ export class DesertSystem extends createSystem({
       o.scale.setScalar(base * (1 + 0.05 * Math.sin(time * 1.2)));
     });
 
-    // Tumbleweeds roll across the flats and wrap around.
+    // Tumbleweeds roll across the flats, bounce, and tumble end over end.
     this.queries.tumbleweeds.entities.forEach((e) => {
       const o = e.object3D!;
       const u = o.userData;
       o.position.x += dt * u.speed;
       if (o.position.x > u.xMax) o.position.x = u.xMin;
-      o.position.y = u.baseY + Math.abs(Math.sin(o.position.x * 1.4)) * 0.16;
-      o.rotation.z -= dt * u.speed * 2.2; // roll in the travel direction
-      o.rotation.x += dt * 0.7;
+      o.position.y = u.baseY + Math.abs(Math.sin(o.position.x * 1.5)) * 0.18;
+      o.rotation.z -= dt * u.speed * 2.4; // roll in the travel direction
+      o.rotation.x += dt * u.speed * 0.8; // chaotic tumble
     });
 
     // Birds wheel overhead, banking and flapping.
@@ -62,6 +64,14 @@ export class DesertSystem extends createSystem({
       const o = e.object3D!;
       const u = o.userData;
       o.rotation.z = Math.sin(time * u.speed + u.phase) * u.amp;
+    });
+
+    // Clouds drift slowly and wrap around the sky.
+    this.queries.clouds.entities.forEach((e) => {
+      const o = e.object3D!;
+      const u = o.userData;
+      o.position.x += dt * u.speed;
+      if (o.position.x > u.xMax) o.position.x = u.xMin;
     });
   }
 }
